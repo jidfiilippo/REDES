@@ -1,0 +1,576 @@
+
+% Default to the notebook output style
+
+    
+
+
+% Inherit from the specified cell style.
+
+
+
+
+    
+\documentclass[11pt]{article}
+
+    
+    
+    \usepackage[T1]{fontenc}
+    % Nicer default font (+ math font) than Computer Modern for most use cases
+    \usepackage{mathpazo}
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % We will generate all images so they have a width \maxwidth. This means
+    % that they will get their normal width if they fit onto the page, but
+    % are scaled down if they would overflow the margins.
+    \makeatletter
+    \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth
+    \else\Gin@nat@width\fi}
+    \makeatother
+    \let\Oldincludegraphics\includegraphics
+    % Set max figure width to be 80% of text width, for now hardcoded.
+    \renewcommand{\includegraphics}[1]{\Oldincludegraphics[width=.8\maxwidth]{#1}}
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionLabelFormat{nolabel}{}
+    \captionsetup{labelformat=nolabel}
+
+    \usepackage{adjustbox} % Used to constrain images to a maximum size 
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage[utf8x]{inputenc} % Allow utf-8 characters in the tex document
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range 
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    
+
+    
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatability definitions
+    \def\gt{>}
+    \def\lt{<}
+    % Document parameters
+    \title{EJ2}
+    
+    
+    
+
+    % Pygments definitions
+    
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % Exact colors from NB
+    \definecolor{incolor}{rgb}{0.0, 0.0, 0.5}
+    \definecolor{outcolor}{rgb}{0.545, 0.0, 0.0}
+
+
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+    \begin{document}
+    
+    
+    \maketitle
+    
+    
+
+    
+    \section{EJERCICIO 2 : DELFINES DE NUEVA
+ZELANDA}\label{ejercicio-2-delfines-de-nueva-zelanda}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}1}]:} \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+        \PY{k+kn}{import} \PY{n+nn}{networkx} \PY{k}{as} \PY{n+nn}{nx}
+        \PY{k+kn}{import} \PY{n+nn}{os}
+        \PY{k+kn}{from} \PY{n+nn}{random} \PY{k}{import} \PY{n}{shuffle}          \PY{c+c1}{\PYZsh{} importamos las librerias necesarias}
+        \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pylab} \PY{k}{as} \PY{n+nn}{plt}       
+        \PY{o}{\PYZpc{}}\PY{k}{matplotlib} inline
+        \PY{k+kn}{from} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{import} \PY{n}{title}\PY{p}{,}\PY{n}{xlabel}\PY{p}{,}\PY{n}{ylabel}\PY{p}{,}\PY{n}{show}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}2}]:} \PY{n}{G} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{read\PYZus{}gml}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dolphins.gml}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{c+c1}{\PYZsh{} definimos la red:cada nodo es un delfin y cada conexion representa una interaccion}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}3}]:} \PY{k}{def} \PY{n+nf}{ldata}\PY{p}{(}\PY{n}{archive}\PY{p}{)}\PY{p}{:}
+            \PY{n}{f}\PY{o}{=}\PY{n+nb}{open}\PY{p}{(}\PY{n}{archive}\PY{p}{)}
+            \PY{n}{data}\PY{o}{=}\PY{p}{[}\PY{p}{]}
+            \PY{k}{for} \PY{n}{line} \PY{o+ow}{in} \PY{n}{f}\PY{p}{:}
+                \PY{n}{line}\PY{o}{=}\PY{n}{line}\PY{o}{.}\PY{n}{strip}\PY{p}{(}\PY{p}{)}
+                \PY{n}{col}\PY{o}{=}\PY{n}{line}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{p}{)}
+                \PY{n}{data}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{col}\PY{p}{)}
+            \PY{k}{return} \PY{n}{data}
+        
+        \PY{n}{dolphinsGender}\PY{o}{=}\PY{n}{ldata}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dolphinsGender.txt}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{c+c1}{\PYZsh{} usamos la funcion \PYZdq{}ldata\PYZdq{} para abrir el archivo .txt }
+                                                   \PY{c+c1}{\PYZsh{} que contiene el genero de cada delfin}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}4}]:} \PY{n}{dict\PYZus{}gender} \PY{o}{=} \PY{p}{\PYZob{}}\PY{n}{dolphin\PYZus{}nombre} \PY{p}{:} \PY{n}{genero} \PY{k}{for} \PY{n}{dolphin\PYZus{}nombre}\PY{p}{,} \PY{n}{genero}  \PY{o+ow}{in} \PY{n}{dolphinsGender}\PY{p}{\PYZcb{}} \PY{c+c1}{\PYZsh{}lista a diccionario}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}5}]:} \PY{k}{def} \PY{n+nf}{AssignGender}\PY{p}{(}\PY{n}{G}\PY{p}{,}\PY{n}{dict\PYZus{}gender}\PY{p}{)}\PY{p}{:}
+            \PY{k}{for} \PY{n}{n} \PY{o+ow}{in} \PY{n}{G}\PY{o}{.}\PY{n}{nodes}\PY{p}{:}
+                \PY{n}{G}\PY{o}{.}\PY{n}{nodes}\PY{p}{[}\PY{n}{n}\PY{p}{]}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{gender}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{dict\PYZus{}gender}\PY{p}{[}\PY{n}{n}\PY{p}{]}
+            \PY{k}{return}
+        
+        \PY{k}{for} \PY{n}{n} \PY{o+ow}{in} \PY{n}{G}\PY{o}{.}\PY{n}{nodes}\PY{p}{:}                                   \PY{c+c1}{\PYZsh{} usamos la funcion \PYZdq{}AssignGender\PYZdq{} para asignar}
+            \PY{n}{G}\PY{o}{.}\PY{n}{nodes}\PY{p}{[}\PY{n}{n}\PY{p}{]}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{gender}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{dict\PYZus{}gender}\PY{p}{[}\PY{n}{n}\PY{p}{]}           \PY{c+c1}{\PYZsh{} un atributo (genero) a los nodos de la red (delfines)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}6}]:} \PY{n+nb}{list}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{get\PYZus{}node\PYZus{}attributes}\PY{p}{(}\PY{n}{G}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{:}\PY{l+m+mi}{9}\PY{p}{]}  \PY{c+c1}{\PYZsh{}chequeamos algunos casos}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}6}]:} [('Beak', 'm'),
+         ('Beescratch', 'm'),
+         ('Bumper', 'm'),
+         ('CCL', 'f'),
+         ('Cross', 'm'),
+         ('DN16', 'f'),
+         ('DN21', 'm'),
+         ('DN63', 'm'),
+         ('Double', 'f')]
+\end{Verbatim}
+            
+    \section{(A) Examine diferentes opciones de layout para este grafo e
+identifique la que le resulte más informativa. Justifique su elección
+detallando las características estructurales de la red que su elección
+pone en evidencia. Incluya en la representación gráfica de la red
+información sobre el sexo de los
+delfines.}\label{a-examine-diferentes-opciones-de-layout-para-este-grafo-e-identifique-la-que-le-resulte-muxe1s-informativa.-justifique-su-elecciuxf3n-detallando-las-caracteruxedsticas-estructurales-de-la-red-que-su-elecciuxf3n-pone-en-evidencia.-incluya-en-la-representaciuxf3n-gruxe1fica-de-la-red-informaciuxf3n-sobre-el-sexo-de-los-delfines.}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}7}]:} \PY{k}{def} \PY{n+nf}{color}\PY{p}{(}\PY{n}{g}\PY{p}{)}\PY{p}{:}                  
+            \PY{k}{if} \PY{n}{g}\PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{m}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+                \PY{n}{col}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{blue}\PY{l+s+s1}{\PYZsq{}}
+            \PY{k}{elif} \PY{n}{g}\PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}                   \PY{c+c1}{\PYZsh{} definimos una funcion para asignar un color distinto a cada genero}
+                \PY{n}{col}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}
+            \PY{k}{else}\PY{p}{:}
+                \PY{n}{col}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{green}\PY{l+s+s1}{\PYZsq{}}
+            \PY{k}{return} \PY{n}{col}
+        
+        \PY{n}{options} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{node\PYZus{}color}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{p}{[}\PY{n}{color}\PY{p}{(}\PY{n}{g}\PY{p}{)} \PY{k}{for} \PY{n}{g} \PY{o+ow}{in} \PY{n}{nx}\PY{o}{.}\PY{n}{get\PYZus{}node\PYZus{}attributes}\PY{p}{(}\PY{n}{G}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{]}\PY{p}{,}
+                   \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{node\PYZus{}size}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+m+mi}{60}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{with\PYZus{}labels}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{k+kc}{True}\PY{p}{\PYZcb{}}
+        
+        \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{221}\PY{p}{)}
+        \PY{n}{nx}\PY{o}{.}\PY{n}{draw\PYZus{}random}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{options}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{222}\PY{p}{)}
+        \PY{n}{nx}\PY{o}{.}\PY{n}{draw\PYZus{}circular}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{options}\PY{p}{)}           \PY{c+c1}{\PYZsh{} graficamos la red con distintos layouts}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{223}\PY{p}{)}
+        \PY{n}{nx}\PY{o}{.}\PY{n}{draw\PYZus{}spectral}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{options}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{224}\PY{p}{)}
+        \PY{n}{nx}\PY{o}{.}\PY{n}{draw\PYZus{}spring}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{options}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_8_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    De los distintos Layouts analizados, el método "Fruchterman-Reingold
+Force-Directed Graph" es el que nos permite visualizar mejor la
+estructura de la red.
+(https://en.wikipedia.org/wiki/Force-directed\_graph\_drawing)
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}8}]:} \PY{n}{options} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{node\PYZus{}color}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{p}{[}\PY{n}{color}\PY{p}{(}\PY{n}{g}\PY{p}{)} \PY{k}{for} \PY{n}{g} \PY{o+ow}{in} \PY{n}{nx}\PY{o}{.}\PY{n}{get\PYZus{}node\PYZus{}attributes}\PY{p}{(}\PY{n}{G}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{]}\PY{p}{,}
+                   \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{node\PYZus{}size}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+m+mi}{200}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{with\PYZus{}labels}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{k+kc}{True}\PY{p}{\PYZcb{}}
+        
+        \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{)}
+        \PY{n}{nx}\PY{o}{.}\PY{n}{draw\PYZus{}spring}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{options}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_10_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \section{(B) ¿Se trata una red donde prevalece la homofilia en la
+variable
+género?}\label{b-se-trata-una-red-donde-prevalece-la-homofilia-en-la-variable-guxe9nero}
+
+    \section{(i) Considere la distribución nula para la fracción de enlaces
+que vinculan géneros diferentes, generada a partir de al menos 1000
+asignaciones aleatorias de
+género.}\label{i-considere-la-distribuciuxf3n-nula-para-la-fracciuxf3n-de-enlaces-que-vinculan-guxe9neros-diferentes-generada-a-partir-de-al-menos-1000-asignaciones-aleatorias-de-guxe9nero.}
+
+    La modularidad es una medida de la estructura de las redes.
+Particularmente mide la fuerza de la división de una red en
+módulos/comunidades. Las redes con alta modularidad tienen conexiones
+sólidas entre los nodos dentro de los módulos, pero escasas conexiones
+entre nodos en diferentes módulos, con lo cual resulta un parámetro
+óptimo para observar la presencia de homofilia en una red. La
+modularidad se defino como:
+
+\[Q=\frac{1}{2m} \sum_{ij} \delta(c_{i}, c_{j}) (A_{ij}-\frac{k_{i}k_{j}}{2m})\]
+
+ \(k_{i}:\) grado del nodo i \(k_{j}:\) grado del nodo j \(c_{i}:\)
+clase i \(c_{j}:\) clase j \(m:\) cantidad de enlaces total
+\(A_{ij} = 1\) si hay un enlace entre el nodo i y el nodo j
+\(A_{ij} = 0\) en otro caso. 
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}9}]:} \PY{k}{def} \PY{n+nf}{delta}\PY{p}{(}\PY{n}{c\PYZus{}i}\PY{p}{,} \PY{n}{c\PYZus{}j}\PY{p}{)}\PY{p}{:}
+            \PY{k}{if}  \PY{n}{c\PYZus{}i} \PY{o}{==} \PY{n}{c\PYZus{}j}\PY{p}{:}
+                \PY{k}{return} \PY{l+m+mi}{1} 
+            \PY{k}{else}\PY{p}{:}
+                \PY{k}{return} \PY{l+m+mi}{0} 
+        
+        \PY{c+c1}{\PYZsh{}definimos la funcion modularidad a partir de un grafo \PYZsq{}G\PYZsq{} que ya tiene montado el campo escalar \PYZsq{}FieldString\PYZsq{} que}
+        \PY{c+c1}{\PYZsh{}le da una clase a cada nodo}
+        
+        \PY{k}{def} \PY{n+nf}{modularity}\PY{p}{(}\PY{n}{G}\PY{p}{,}\PY{n}{FieldString}\PY{p}{)}\PY{p}{:}
+            \PY{n}{modularity} \PY{o}{=} \PY{l+m+mi}{0}
+            \PY{n}{m} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{shape}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{edges}\PY{p}{(}\PY{n}{G}\PY{p}{)}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{c+c1}{\PYZsh{}cantidad de enlaces}
+            \PY{n}{A} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{to\PYZus{}numpy\PYZus{}matrix}\PY{p}{(}\PY{n}{G}\PY{p}{)}    \PY{c+c1}{\PYZsh{}adjency matrix (por definicion cumple las condiciones de A\PYZus{}ij mencionadas arriba)}
+            
+            \PY{n}{Degree} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{G}\PY{o}{.}\PY{n}{degree}\PY{p}{)}                     \PY{c+c1}{\PYZsh{} lista de tuplas (nodo,grado) con un orden determinado}
+            \PY{n}{degree} \PY{o}{=} \PY{p}{[}\PY{n}{degree} \PY{k}{for} \PY{n}{node}\PY{p}{,}\PY{n}{degree} \PY{o+ow}{in} \PY{n}{Degree}\PY{p}{]} \PY{c+c1}{\PYZsh{} genero un vector donde cada elemento es el grado para el nodo}
+                                                        \PY{c+c1}{\PYZsh{} indexado como 0,1,2... , que se corresponde con el orden de }
+                                                        \PY{c+c1}{\PYZsh{} la lista Degree}
+            
+            \PY{n}{atrributes} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{get\PYZus{}node\PYZus{}attributes}\PY{p}{(}\PY{n}{G}\PY{p}{,}\PY{n}{FieldString}\PY{p}{)}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{)}  \PY{c+c1}{\PYZsh{}lista con los generos ordenados}
+            
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{n}{G}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{n}{G}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                    \PY{n}{modularity} \PY{o}{=} \PY{p}{(}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{/}\PY{p}{(}\PY{l+m+mi}{2} \PY{o}{*} \PY{n}{m}\PY{p}{)}\PY{p}{)} \PY{o}{*} \PY{n}{delta}\PY{p}{(}\PY{n}{atrributes}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{atrributes}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{)}\PY{o}{*}     \PY{c+c1}{\PYZsh{} calculo la modularidad}
+                                  \PY{p}{(}\PY{n}{A}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{p}{(}\PY{n}{degree}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{*} \PY{n}{degree}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{)}\PY{o}{/}\PY{p}{(}\PY{l+m+mi}{2}\PY{o}{*}\PY{n}{m}\PY{p}{)}\PY{p}{)}\PY{o}{+}\PY{n}{modularity}\PY{p}{)}
+            
+            \PY{k}{return} \PY{n}{modularity}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}10}]:} \PY{n}{modularity}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{c+c1}{\PYZsh{} modularidad de la red real}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}10}]:} 0.12370950516197912
+\end{Verbatim}
+            
+    Modularidad en el caso aleatorio
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}16}]:} \PY{k}{def} \PY{n+nf}{BreakFieldAttribution}\PY{p}{(}\PY{n}{fieldAtributtion}\PY{p}{)}\PY{p}{:}              
+             \PY{n}{names} \PY{o}{=} \PY{p}{[}\PY{n}{nodes} \PY{k}{for} \PY{n}{nodes}\PY{p}{,}\PY{n}{field} \PY{o+ow}{in} \PY{n}{fieldAtributtion}\PY{p}{]}  \PY{c+c1}{\PYZsh{} funcion para separar los keys y los values }
+             \PY{n}{field} \PY{o}{=} \PY{p}{[}\PY{n}{field} \PY{k}{for} \PY{n}{nodes}\PY{p}{,}\PY{n}{field} \PY{o+ow}{in} \PY{n}{fieldAtributtion}\PY{p}{]}  \PY{c+c1}{\PYZsh{}          en un diccionario}
+             \PY{k}{return} \PY{n}{names}\PY{p}{,}\PY{n}{field}
+         
+         \PY{n}{DistributionModularity} \PY{o}{=} \PY{p}{[}\PY{p}{]}                          \PY{c+c1}{\PYZsh{} Vector para guardar las modularidades de cada iteracion}
+         
+         \PY{n}{names} \PY{o}{=} \PY{n}{BreakFieldAttribution}\PY{p}{(}\PY{n}{dolphinsGender}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}     \PY{c+c1}{\PYZsh{} genero una lista con los nombres de los delfines}
+         \PY{n}{genders} \PY{o}{=} \PY{n}{BreakFieldAttribution}\PY{p}{(}\PY{n}{dolphinsGender}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}   \PY{c+c1}{\PYZsh{} genero una lista con los generos de los delfines }
+         \PY{n}{it} \PY{o}{=} \PY{l+m+mi}{1000}                                           \PY{c+c1}{\PYZsh{} numero de iteraciones }
+         \PY{n}{H} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{read\PYZus{}gml}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dolphins.gml}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}                      \PY{c+c1}{\PYZsh{} trabajamos sobre H (grafo nuevo)}
+         
+         
+         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{it}\PY{p}{)}\PY{p}{:}
+             \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{shuffle}\PY{p}{(}\PY{n}{genders}\PY{p}{)}                       \PY{c+c1}{\PYZsh{} reordeno al azar la lista de generos}
+             \PY{n}{dict\PYZus{}gender\PYZus{}together} \PY{o}{=} \PY{n+nb}{dict}\PY{p}{(}\PY{n+nb}{zip}\PY{p}{(}\PY{n}{names}\PY{p}{,}\PY{n}{genders}\PY{p}{)}\PY{p}{)}  \PY{c+c1}{\PYZsh{} genero un diccionario nuevo \PYZob{}delfines: generos reordenados\PYZcb{} }
+             \PY{n}{AssignGender}\PY{p}{(}\PY{n}{H}\PY{p}{,}\PY{n}{dict\PYZus{}gender\PYZus{}together}\PY{p}{)}             \PY{c+c1}{\PYZsh{} Asigno el genero correspondiente a cada nodo de H }
+             \PY{n}{DistributionModularity}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{modularity}\PY{p}{(}\PY{n}{H}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Calculo y guardo la modularidad para este grafo}
+\end{Verbatim}
+
+
+    Histograma
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}17}]:} \PY{n}{font} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{family}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DejaVu Sans}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                 \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{weight}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bold}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                 \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{size}\PY{l+s+s1}{\PYZsq{}}   \PY{p}{:} \PY{l+m+mi}{20}\PY{p}{\PYZcb{}}
+         
+         \PY{n}{plt}\PY{o}{.}\PY{n}{rc}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{font}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{font}\PY{p}{)}
+         
+         \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{n}{DistributionModularity}\PY{p}{,}\PY{n}{bins}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{axvline}\PY{p}{(}\PY{n}{modularity}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{n}{c}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{red}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{modularity}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{modularidad red real}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Histograma de la distribución de modularidad }\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{ (}\PY{l+s+si}{\PYZpc{}i}\PY{l+s+s2}{ asignaciones aleatorias de sexo)}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}}\PY{k}{it})
+         \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Modularidad}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Frecuencia}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
+         \PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_19_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \section{ii. A partir de lo obtenido proponga una estimación para el
+valor y el error de dicha cantidad cuando no existe vínculo entre
+topolgía de la red medio y asignación de género. Compare su estimación
+con el valor medio
+esperado.}\label{ii.-a-partir-de-lo-obtenido-proponga-una-estimaciuxf3n-para-el-valor-y-el-error-de-dicha-cantidad-cuando-no-existe-vuxednculo-entre-topolguxeda-de-la-red-medio-y-asignaciuxf3n-de-guxe9nero.-compare-su-estimaciuxf3n-con-el-valor-medio-esperado.}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}18}]:} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{DistributionModularity}\PY{p}{)}\PY{p}{,} \PY{n}{modularity}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{DistributionModularity}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}18}]:} (-0.013000395553973473, 0.12370950516197912, 0.03515009700942713)
+\end{Verbatim}
+            
+    Entonces, el valor que sale aleatorio es: \(-0.013 \pm 0.035\) en
+unidades arbitrarias Y el valor real es 0.12 que se encuentra fuera del
+intervalo del valor medio de la distribucion aleatoria
+
+    \section{(iii) Estime la significancia estadística (p-valor) del valor
+observado en el caso de la red
+real.}\label{iii-estime-la-significancia-estaduxedstica-p-valor-del-valor-observado-en-el-caso-de-la-red-real.}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}19}]:} \PY{c+c1}{\PYZsh{}apariciones de valores por encima del que presenta nuestro grafo con la atribucion genero}
+         \PY{n}{frecuencia}\PY{o}{=}\PY{n+nb}{sum}\PY{p}{(}\PY{n}{DistributionModularity}\PY{o}{\PYZgt{}}\PY{o}{=}\PY{n}{modularity}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}20}]:} \PY{c+c1}{\PYZsh{} p\PYZhy{}value: area a derecha del valor real en el histograma}
+         \PY{n}{pvalue} \PY{o}{=} \PY{p}{(}\PY{n+nb}{max}\PY{p}{(}\PY{n}{DistributionModularity}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{modularity}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)} \PY{o}{*} \PY{p}{(}\PY{n}{frecuencia}\PY{o}{/}\PY{n}{it}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{p\PYZhy{}value:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{pvalue}\PY{p}{)}
+         
+         \PY{n}{pcrit}\PY{o}{=}\PY{l+m+mi}{1}\PY{o}{/}\PY{l+m+mi}{1000} \PY{c+c1}{\PYZsh{}en general se toma ese valor }
+         
+         \PY{k}{if} \PY{n}{pvalue} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{p}{(}\PY{n}{pcrit}\PY{p}{)}\PY{p}{:}                                                          
+             \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{fuera de la hipotesis nula}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{k}{else}\PY{p}{:}
+             \PY{n+nb}{print} \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{en la hipotesis nula}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+p-value: -0.0
+fuera de la hipotesis nula
+
+    \end{Verbatim}
+
+    
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+    \end{document}
