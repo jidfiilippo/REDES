@@ -141,7 +141,7 @@
     \def\gt{>}
     \def\lt{<}
     % Document parameters
-    \title{TP1\_EJ2}
+    \title{TP1\_EJ3}
     
     
     
@@ -280,493 +280,476 @@
     
 
     
+    \section{EJERCICIO 3:}\label{ejercicio-3}
+
+Consideramos la red as-22july06.gml creada por Mark Newman que contiene
+la estructura de los sistemas autónomos de internet relevada a mediados
+de 2006.
+
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}1}]:} \PY{c+c1}{\PYZsh{}paquetes }
+{\color{incolor}In [{\color{incolor}4}]:} \PY{c+c1}{\PYZsh{}paquetes }
         \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
         \PY{k+kn}{import} \PY{n+nn}{networkx} \PY{k}{as} \PY{n+nn}{nx}
         \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pylab} \PY{k}{as} \PY{n+nn}{plt}
         \PY{o}{\PYZpc{}}\PY{k}{matplotlib} inline
         \PY{k+kn}{import} \PY{n+nn}{os}
-        \PY{k+kn}{from} \PY{n+nn}{random} \PY{k}{import} \PY{n}{shuffle}
+        \PY{c+c1}{\PYZsh{}from random import shuffle}
+        \PY{k+kn}{import} \PY{n+nn}{math}
+        \PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+        \PY{k+kn}{from} \PY{n+nn}{scipy} \PY{k}{import} \PY{n}{optimize}
 \end{Verbatim}
 
 
+    Generamos el grafo
+
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}2}]:} \PY{n}{G} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{read\PYZus{}gml}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dolphins.gml}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}5}]:} \PY{n}{G} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{read\PYZus{}gml}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{as\PYZhy{}22july06.gml}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
 \end{Verbatim}
 
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}3}]:} \PY{k}{def} \PY{n+nf}{ldata}\PY{p}{(}\PY{n}{archive}\PY{p}{)}\PY{p}{:}
-            \PY{n}{f}\PY{o}{=}\PY{n+nb}{open}\PY{p}{(}\PY{n}{archive}\PY{p}{)}
-            \PY{n}{data}\PY{o}{=}\PY{p}{[}\PY{p}{]}
-            \PY{k}{for} \PY{n}{line} \PY{o+ow}{in} \PY{n}{f}\PY{p}{:}
-                \PY{n}{line}\PY{o}{=}\PY{n}{line}\PY{o}{.}\PY{n}{strip}\PY{p}{(}\PY{p}{)}
-                \PY{n}{col}\PY{o}{=}\PY{n}{line}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{p}{)}
-                \PY{n}{data}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{col}\PY{p}{)}
-            \PY{k}{return} \PY{n}{data}
-\end{Verbatim}
-
+    Definimos algunos objetos de interes
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}32}]:} \PY{n}{G}
+{\color{incolor}In [{\color{incolor}6}]:} \PY{n}{N} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{G}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+        \PY{n}{degree} \PY{o}{=} \PY{p}{[}\PY{n}{degree} \PY{k}{for} \PY{n}{node}\PY{p}{,}\PY{n}{degree} \PY{o+ow}{in} \PY{n}{G}\PY{o}{.}\PY{n}{degree}\PY{p}{(}\PY{p}{)}\PY{p}{]}  \PY{c+c1}{\PYZsh{}a partir de un diccionario nos quedamos con los values en una lista }
+        \PY{n}{set\PYZus{}degree} \PY{o}{=} \PY{n+nb}{set}\PY{p}{(}\PY{n}{degree}\PY{p}{)}                         \PY{c+c1}{\PYZsh{}lo hacemos un set para quitarle las repeticiones }
+        \PY{n+nb}{len}\PY{p}{(}\PY{n}{degree}\PY{p}{)}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{set\PYZus{}degree}\PY{p}{)}                     \PY{c+c1}{\PYZsh{}para tener una idea de cuantas repeticiones hay }
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}32}]:} <networkx.classes.graph.Graph at 0x2af5b5f49e8>
+{\color{outcolor}Out[{\color{outcolor}6}]:} (22963, 161)
 \end{Verbatim}
             
+    \section{a. BINEADO LINEAL}\label{a.-bineado-lineal}
+
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}4}]:} \PY{n}{G}\PY{o}{.}\PY{n}{nodes}
+{\color{incolor}In [{\color{incolor}7}]:} \PY{c+c1}{\PYZsh{}vamos a recorrer todo el set con k. Por ej: Para k = 1, P1 es un vector donde cada elemento es el grado k = 1 al recorrer degree }
+        \PY{c+c1}{\PYZsh{}que tiene las repeticiones. Entonces, el tamaño de ese vector es la cantidad de nodos que tienen grado k = 1. }
+        \PY{c+c1}{\PYZsh{}asi es que P es un vector donde cada elemento es la cantidad de nodos con grado k normalizado por la cantidad de nodos total.}
+        
+        \PY{n}{P} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+        
+        \PY{k}{for} \PY{n}{k} \PY{o+ow}{in} \PY{n}{set\PYZus{}degree}\PY{p}{:}
+            \PY{n}{Pk} \PY{o}{=} \PY{p}{[}\PY{n}{d} \PY{k}{for} \PY{n}{d} \PY{o+ow}{in} \PY{n}{degree} \PY{k}{if} \PY{n}{d}\PY{o}{==}\PY{n}{k}\PY{p}{]}
+            \PY{n}{P}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{Pk}\PY{p}{)}\PY{o}{/}\PY{n}{N}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}8}]:} \PY{c+c1}{\PYZsh{}chequeo que si sumo todos los elementos obtengo 1}
+        \PY{n+nb}{sum}\PY{p}{(}\PY{n}{P}\PY{p}{)}
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}4}]:} NodeView(('Beak', 'Beescratch', 'Bumper', 'CCL', 'Cross', 'DN16', 'DN21', 'DN63', 'Double', 'Feather', 'Fish', 'Five', 'Fork', 'Gallatin', 'Grin', 'Haecksel', 'Hook', 'Jet', 'Jonah', 'Knit', 'Kringel', 'MN105', 'MN23', 'MN60', 'MN83', 'Mus', 'Notch', 'Number1', 'Oscar', 'Patchback', 'PL', 'Quasi', 'Ripplefluke', 'Scabs', 'Shmuddel', 'SMN5', 'SN100', 'SN4', 'SN63', 'SN89', 'SN9', 'SN90', 'SN96', 'Stripes', 'Thumper', 'Topless', 'TR120', 'TR77', 'TR82', 'TR88', 'TR99', 'Trigger', 'TSN103', 'TSN83', 'Upbang', 'Vau', 'Wave', 'Web', 'Whitetip', 'Zap', 'Zig', 'Zipfel'))
+{\color{outcolor}Out[{\color{outcolor}8}]:} 1.0000000000000036
 \end{Verbatim}
             
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}5}]:} \PY{n}{dolphinsGender}\PY{o}{=}\PY{n}{ldata}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dolphinsGender.txt}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-        \PY{c+c1}{\PYZsh{}dolphinsGender}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}90}]:} \PY{n+nb}{type}\PY{p}{(}\PY{n}{dolphinsGender}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}90}]:} list
-\end{Verbatim}
+{\color{incolor}In [{\color{incolor}9}]:} \PY{n}{ls\PYZus{}set\PYZus{}degree} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{set\PYZus{}degree}\PY{p}{)}                             \PY{c+c1}{\PYZsh{}lo ponemos como una lista para poder orderlo para que el elemento i\PYZhy{}esimo}
+                                                                     \PY{c+c1}{\PYZsh{}se corresponda con el i\PYZhy{}esimo del vector P para plotear }
             
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}7}]:} \PY{n}{dict\PYZus{}gender} \PY{o}{=} \PY{p}{\PYZob{}}\PY{n}{dolphin\PYZus{}nombre} \PY{p}{:} \PY{n}{genero} \PY{k}{for} \PY{n}{dolphin\PYZus{}nombre}\PY{p}{,} \PY{n}{genero}  \PY{o+ow}{in} \PY{n}{dolphinsGender}\PY{p}{\PYZcb{}}
+        \PY{n}{dict\PYZus{}distdg} \PY{o}{=} \PY{p}{\PYZob{}}\PY{n}{ls\PYZus{}set\PYZus{}degree}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{:}\PY{n}{P}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{P}\PY{p}{)}\PY{p}{)}\PY{p}{\PYZcb{}} \PY{c+c1}{\PYZsh{}armamos un diccionario donde la key es el grado y el value la probabilidad }
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}8}]:} \PY{k}{def} \PY{n+nf}{AssignGender}\PY{p}{(}\PY{n}{G}\PY{p}{,}\PY{n}{dict\PYZus{}gender}\PY{p}{)}\PY{p}{:}
-            \PY{k}{for} \PY{n}{n} \PY{o+ow}{in} \PY{n}{G}\PY{o}{.}\PY{n}{nodes}\PY{p}{:}
-                \PY{n}{G}\PY{o}{.}\PY{n}{nodes}\PY{p}{[}\PY{n}{n}\PY{p}{]}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{gender}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{dict\PYZus{}gender}\PY{p}{[}\PY{n}{n}\PY{p}{]}
-            \PY{k}{return}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}9}]:} \PY{n}{nx}\PY{o}{.}\PY{n}{get\PYZus{}node\PYZus{}attributes}\PY{p}{(}\PY{n}{G}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}9}]:} \{\}
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}10}]:} \PY{k}{def} \PY{n+nf}{color}\PY{p}{(}\PY{n}{g}\PY{p}{)}\PY{p}{:}
-             \PY{k}{if} \PY{n}{g}\PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{m}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
-                 \PY{n}{col}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{blue}\PY{l+s+s1}{\PYZsq{}}
-             \PY{k}{elif} \PY{n}{g}\PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
-                 \PY{n}{col}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}
-             \PY{k}{else}\PY{p}{:}
-                 \PY{n}{col}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{green}\PY{l+s+s1}{\PYZsq{}}
-             \PY{k}{return} \PY{n}{col}
-\end{Verbatim}
-
-
-    \section{ITEM A. HACEMOS UNA COMPARACION DE LOS
-LAYOUTS}\label{item-a.-hacemos-una-comparacion-de-los-layouts}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}188}]:} \PY{n}{options} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{node\PYZus{}color}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{p}{[}\PY{n}{color}\PY{p}{(}\PY{n}{g}\PY{p}{)} \PY{k}{for} \PY{n}{g} \PY{o+ow}{in} \PY{n}{nx}\PY{o}{.}\PY{n}{get\PYZus{}node\PYZus{}attributes}\PY{p}{(}\PY{n}{G}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{]}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{node\PYZus{}size}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+m+mi}{60}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{with\PYZus{}labels}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{k+kc}{True}\PY{p}{\PYZcb{}}
-          \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{)}
-          \PY{n}{plt}\PY{o}{.}\PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{221}\PY{p}{)}
-          \PY{n}{nx}\PY{o}{.}\PY{n}{draw\PYZus{}random}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{options}\PY{p}{)}
-          \PY{n}{plt}\PY{o}{.}\PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{222}\PY{p}{)}
-          \PY{n}{nx}\PY{o}{.}\PY{n}{draw\PYZus{}circular}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{options}\PY{p}{)}
-          \PY{n}{plt}\PY{o}{.}\PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{223}\PY{p}{)}
-          \PY{n}{nx}\PY{o}{.}\PY{n}{draw\PYZus{}spectral}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{options}\PY{p}{)}
-          \PY{n}{plt}\PY{o}{.}\PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{224}\PY{p}{)}
-          \PY{n}{nx}\PY{o}{.}\PY{n}{draw\PYZus{}spring}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{options}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-C:\textbackslash{}Users\textbackslash{}Elizabeth\textbackslash{}Anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}matplotlib\textbackslash{}font\_manager.py:1328: UserWarning: findfont: Font family ['normal'] not found. Falling back to DejaVu Sans
-  (prop.get\_family(), self.defaultFamily[fontext]))
-
-    \end{Verbatim}
-
-    \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_12_1.png}
-    \end{center}
-    { \hspace*{\fill} \\}
-    
-    \section{AHORA NOS QUEDAMOS CON EL MEJOR LAYOUT PORQUE PERMITE VER BIEN
-UNA ESTRUCTURA. LO QUE HACE ESTE LAYOUT ES EL SIGUIENTE
-ALGORITMO:}\label{ahora-nos-quedamos-con-el-mejor-layout-porque-permite-ver-bien-una-estructura.-lo-que-hace-este-layout-es-el-siguiente-algoritmo}
-
-Fruchterman-Reingold force-directed
-
-ref: https://en.wikipedia.org/wiki/Force-directed\_graph\_drawing
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}12}]:} \PY{n}{options} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{node\PYZus{}color}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{p}{[}\PY{n}{color}\PY{p}{(}\PY{n}{g}\PY{p}{)} \PY{k}{for} \PY{n}{g} \PY{o+ow}{in} \PY{n}{nx}\PY{o}{.}\PY{n}{get\PYZus{}node\PYZus{}attributes}\PY{p}{(}\PY{n}{G}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{]}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{node\PYZus{}size}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+m+mi}{200}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{with\PYZus{}labels}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{k+kc}{True}\PY{p}{\PYZcb{}}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{)}
-         \PY{n}{nx}\PY{o}{.}\PY{n}{draw\PYZus{}spring}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{options}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_14_0.png}
-    \end{center}
-    { \hspace*{\fill} \\}
-    
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}13}]:} \PY{c+c1}{\PYZsh{}PARA VER SI ERA RED DIRIGIDA}
+{\color{incolor}In [{\color{incolor}10}]:} \PY{n}{font} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{family}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Helvetica}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                 \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{weight}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bold}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                 \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{size}\PY{l+s+s1}{\PYZsq{}}   \PY{p}{:} \PY{l+m+mi}{20}\PY{p}{\PYZcb{}}
          
-         \PY{n}{set1}\PY{o}{=}\PY{n+nb}{set}\PY{p}{(}\PY{n}{G}\PY{o}{.}\PY{n}{edges}\PY{p}{)}
-         \PY{c+c1}{\PYZsh{}set1}
-         \PY{n}{set2} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{(}\PY{n}{nombre2}\PY{p}{,}\PY{n}{nombre1}\PY{p}{)} \PY{k}{for} \PY{n}{nombre1}\PY{p}{,} \PY{n}{nombre2}  \PY{o+ow}{in} \PY{n}{set1}\PY{p}{\PYZcb{}}
-         \PY{c+c1}{\PYZsh{}set2}
-         \PY{n}{set1}\PY{o}{.}\PY{n}{intersection}\PY{p}{(}\PY{n}{set2}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{rc}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{font}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{font}\PY{p}{)}
+         
+         \PY{n}{f} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize} \PY{o}{=} \PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{12}\PY{p}{)}\PY{p}{)}
+         \PY{n}{f}\PY{o}{.}\PY{n}{subplots\PYZus{}adjust}\PY{p}{(}\PY{n}{hspace}\PY{o}{=}\PY{l+m+mf}{0.4}\PY{p}{,} \PY{n}{wspace}\PY{o}{=}\PY{l+m+mf}{0.4}\PY{p}{)}
+         \PY{n}{f}\PY{o}{.}\PY{n}{suptitle}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bineados lineales}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{fontweight} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bold}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{size} \PY{o}{=} \PY{l+m+mi}{30}\PY{p}{)} 
+         \PY{n}{sub1} \PY{o}{=} \PY{n}{f}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{221}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{ls\PYZus{}set\PYZus{}degree}\PY{p}{,}\PY{n}{P}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{c+c1}{\PYZsh{}sub1.set\PYZus{}title(\PYZsq{}Ambas escalas lineales\PYZsq{}, size = 20)}
+         \PY{c+c1}{\PYZsh{}sub1.set\PYZus{}xlabel(\PYZdq{}k\PYZdq{})}
+         \PY{c+c1}{\PYZsh{}sub1.set\PYZus{}ylabel(\PYZdq{}\PYZdl{}P\PYZus{}k\PYZdl{}\PYZdq{})}
+         \PY{n}{sub2} \PY{o}{=} \PY{n}{f}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{222}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{loglog}\PY{p}{(}\PY{n}{ls\PYZus{}set\PYZus{}degree}\PY{p}{,}\PY{n}{P}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{c+c1}{\PYZsh{}sub2.set\PYZus{}title(\PYZsq{}Ambas escalas logaritmicas\PYZsq{}, size = 20)}
+         \PY{c+c1}{\PYZsh{}sub2.set\PYZus{}xlabel(\PYZdq{}k\PYZdq{})}
+         \PY{c+c1}{\PYZsh{}sub2.set\PYZus{}ylabel(\PYZdq{}\PYZdl{}P\PYZus{}k\PYZdl{}\PYZdq{})}
+         \PY{n}{sub3} \PY{o}{=} \PY{n}{f}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{223}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{semilogy}\PY{p}{(}\PY{n}{ls\PYZus{}set\PYZus{}degree}\PY{p}{,}\PY{n}{P}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{c+c1}{\PYZsh{}sub3.set\PYZus{}title(\PYZsq{}Escala lineal en x y logaritmica en y\PYZsq{}, size = 20)}
+         \PY{n}{sub4} \PY{o}{=} \PY{n}{f}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{224}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{semilogx}\PY{p}{(}\PY{n}{ls\PYZus{}set\PYZus{}degree}\PY{p}{,}\PY{n}{P}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{c+c1}{\PYZsh{}sub3.set\PYZus{}xlabel(\PYZdq{}k\PYZdq{})}
+         \PY{c+c1}{\PYZsh{}sub3.set\PYZus{}ylabel(\PYZdq{}\PYZdl{}P\PYZus{}k\PYZdl{}\PYZdq{})}
+         \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
+         \PY{n}{sub1}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Ambas escalas lineales}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{size} \PY{o}{=} \PY{l+m+mi}{20}\PY{p}{)}
+         \PY{n}{sub2}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Ambas escalas log}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{size} \PY{o}{=} \PY{l+m+mi}{20}\PY{p}{)}
+         \PY{n}{sub3}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Escala lineal en x y log en y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{size} \PY{o}{=} \PY{l+m+mi}{20}\PY{p}{)}
+         \PY{n}{sub4}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Escala log en x y lineal en y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{size} \PY{o}{=} \PY{l+m+mi}{20}\PY{p}{)}
+         \PY{n}{sub1}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub1}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}P\PYZus{}k\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub2}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub2}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}P\PYZus{}k\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub3}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub3}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}P\PYZus{}k\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub4}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub4}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}P\PYZus{}k\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}13}]:} set()
+{\color{outcolor}Out[{\color{outcolor}10}]:} Text(0,0.5,'\$P\_k\$')
 \end{Verbatim}
             
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}14}]:} \PY{n}{pos}\PY{o}{=}\PY{n}{nx}\PY{o}{.}\PY{n}{spring\PYZus{}layout}\PY{p}{(}\PY{n}{G}\PY{p}{)}
-         \PY{n}{pos}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}14}]:} \{'Beak': array([-0.19001891, -0.15976109]),
-          'Beescratch': array([ 0.41141584, -0.03467136]),
-          'Bumper': array([-0.32744294, -0.40711594]),
-          'CCL': array([-0.12228902, -0.07953905]),
-          'Cross': array([-0.41512293,  0.48517657]),
-          'DN16': array([0.86832373, 0.24198342]),
-          'DN21': array([0.79366825, 0.12713177]),
-          'DN63': array([ 0.26346616, -0.08533439]),
-          'Double': array([-0.11133487, -0.01580336]),
-          'Feather': array([0.77064992, 0.22924626]),
-          'Fish': array([-0.26027585, -0.2735212 ]),
-          'Five': array([-0.5116831 ,  0.44403654]),
-          'Fork': array([-0.70232443,  0.10822911]),
-          'Gallatin': array([0.72914943, 0.19757529]),
-          'Grin': array([-0.36734966, -0.08348162]),
-          'Haecksel': array([-0.2133005 ,  0.11195443]),
-          'Hook': array([-0.40138989, -0.12982592]),
-          'Jet': array([0.73852445, 0.01206774]),
-          'Jonah': array([-0.32840241,  0.09699877]),
-          'Knit': array([ 0.3701245 , -0.13279082]),
-          'Kringel': array([-0.21186667, -0.10793752]),
-          'MN105': array([-0.43122871,  0.09644692]),
-          'MN23': array([ 0.9799152 , -0.01949077]),
-          'MN60': array([-0.1446924 ,  0.21666894]),
-          'MN83': array([-0.37860877,  0.12790243]),
-          'Mus': array([ 0.72227409, -0.16004395]),
-          'Notch': array([ 0.59955951, -0.18233537]),
-          'Number1': array([ 0.54723155, -0.10502475]),
-          'Oscar': array([ 0.08331784, -0.12094605]),
-          'Patchback': array([-0.42532216, -0.02331373]),
-          'PL': array([ 0.13139349, -0.23079814]),
-          'Quasi': array([ 0.94955957, -0.11177814]),
-          'Ripplefluke': array([0.76644908, 0.43888649]),
-          'Scabs': array([-0.46838228, -0.03326897]),
-          'Shmuddel': array([-0.5697087 , -0.12133468]),
-          'SMN5': array([-0.65053773, -0.17607871]),
-          'SN100': array([0.03372287, 0.02682552]),
-          'SN4': array([-0.32311058, -0.08240019]),
-          'SN63': array([-0.48716545, -0.14075748]),
-          'SN89': array([0.36029706, 0.14829078]),
-          'SN9': array([-0.15614394, -0.05524667]),
-          'SN90': array([0.62064027, 0.11789514]),
-          'SN96': array([-0.14641312, -0.27568386]),
-          'Stripes': array([-0.56056859, -0.18024336]),
-          'Thumper': array([-0.42097255, -0.26580346]),
-          'Topless': array([-0.27203417,  0.09552636]),
-          'TR120': array([-0.82197975, -0.24589741]),
-          'TR77': array([-0.06036422, -0.24409953]),
-          'TR82': array([0.85825266, 0.35579195]),
-          'TR88': array([-0.8418378 , -0.15225881]),
-          'TR99': array([-0.30223091, -0.0261154 ]),
-          'Trigger': array([-0.3625055 ,  0.23199716]),
-          'TSN103': array([-0.34878944, -0.16591909]),
-          'TSN83': array([-0.65670039, -0.38789986]),
-          'Upbang': array([0.54961037, 0.04085644]),
-          'Vau': array([-0.26593503,  0.34234914]),
-          'Wave': array([1.        , 0.20824803]),
-          'Web': array([0.67491052, 0.18527081]),
-          'Whitetip': array([-0.7484596 , -0.06711407]),
-          'Zap': array([-0.09171325,  0.08606688]),
-          'Zig': array([0.75310455, 0.66583686]),
-          'Zipfel': array([-0.47735464, -0.35562504])\}
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}15}]:} \PY{n}{p}\PY{o}{=}\PY{l+m+mi}{0} \PY{c+c1}{\PYZsh{}female}
-         \PY{n}{q}\PY{o}{=}\PY{l+m+mi}{0} \PY{c+c1}{\PYZsh{}male}
-         \PY{n}{r}\PY{o}{=}\PY{l+m+mi}{0} \PY{c+c1}{\PYZsh{}na}
-         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{shape}\PY{p}{(}\PY{n}{dolphinsGender}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{:}
-             \PY{k}{if} \PY{n}{dolphinsGender}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
-                 \PY{n}{p}\PY{o}{=}\PY{n}{p}\PY{o}{+}\PY{l+m+mi}{1}
-             \PY{k}{elif} \PY{n}{dolphinsGender}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{m}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
-                 \PY{n}{q}\PY{o}{=}\PY{n}{q}\PY{o}{+}\PY{l+m+mi}{1}
-             \PY{k}{else}\PY{p}{:}
-                 \PY{n}{r}\PY{o}{=}\PY{n}{r}\PY{o}{+}\PY{l+m+mi}{1}
-         \PY{p}{[}\PY{n}{p}\PY{p}{,}\PY{n}{q}\PY{p}{,}\PY{n}{r}\PY{p}{]}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}15}]:} [24, 34, 4]
-\end{Verbatim}
-            
-    \section{PUNTO B-I}\label{punto-b-i}
-
-    1ro: dividir el diccionario de dict\_gender por la key y por el value.
-
-2do: La key la dejamos quita y vamo a aplicar shuffle al value.
-
-3ro: Eso del shuffle lo hacemos en cada iteracion (1000 en total) y
-generamos el diccionario devuelta uniendo ambas cosas para asignar
-atributo gender a los nodos.
-
-4to: Calculamos la modularidad \$ \frac{1}{2m} \sum\emph{\{ij\}
-\delta(c}\{i\}, c\_\{j\}) (A\_\{ij\}-\frac{k_{i}k_{j}}{m})\$
-
-\(k_{i}\) el grado del nodo i, \(k_{j}\) el grado del nodo j, \(c_{i}\)
-la clase i, \(c_{j}\) la clase j, \(A_{ij} = 1\) si hay un enlace entre
-el nodo i y el nodo j o sino \(A_{ij} = 0\) m la cantidad de enlaces
-total
-
-\(\delta(c_{i}, c_{j}) = \frac{c_{i}c_{j} + 1}{2}\), esto es solo para
-dos clases.. aca tenemos 3
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}70}]:} \PY{n}{A} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{to\PYZus{}numpy\PYZus{}matrix}\PY{p}{(}\PY{n}{G}\PY{p}{)}                            \PY{c+c1}{\PYZsh{}hace la adjency matrix}
-         \PY{n}{np}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{n}{A}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{n}{G}\PY{p}{)}\PY{p}{)}                  \PY{c+c1}{\PYZsh{}chequeo que el tamano este bien}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}70}]:} (62, 62, 0.0)
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}73}]:} \PY{n}{G}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}73}]:} NodeView(('Beak', 'Beescratch', 'Bumper', 'CCL', 'Cross', 'DN16', 'DN21', 'DN63', 'Double', 'Feather', 'Fish', 'Five', 'Fork', 'Gallatin', 'Grin', 'Haecksel', 'Hook', 'Jet', 'Jonah', 'Knit', 'Kringel', 'MN105', 'MN23', 'MN60', 'MN83', 'Mus', 'Notch', 'Number1', 'Oscar', 'Patchback', 'PL', 'Quasi', 'Ripplefluke', 'Scabs', 'Shmuddel', 'SMN5', 'SN100', 'SN4', 'SN63', 'SN89', 'SN9', 'SN90', 'SN96', 'Stripes', 'Thumper', 'Topless', 'TR120', 'TR77', 'TR82', 'TR88', 'TR99', 'Trigger', 'TSN103', 'TSN83', 'Upbang', 'Vau', 'Wave', 'Web', 'Whitetip', 'Zap', 'Zig', 'Zipfel'))
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}65}]:} \PY{n}{A} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{matrix}\PY{p}{(}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{]} \PY{p}{,}\PY{p}{[}\PY{l+m+mi}{3} \PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{]}\PY{p}{]}\PY{p}{)}
-         \PY{n}{np}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{n}{A}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}   \PY{c+c1}{\PYZsh{}de la columna 1}
-         \PY{n}{np}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{n}{A}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}   \PY{c+c1}{\PYZsh{}de la fila 1}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}65}]:} 2
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}93}]:} \PY{n}{Degree} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{G}\PY{o}{.}\PY{n}{degree}\PY{p}{)}                          \PY{c+c1}{\PYZsh{}hago una lista a partir de lo que devuelve G.degree }
-         \PY{n}{degree} \PY{o}{=} \PY{p}{[}\PY{n}{degree} \PY{k}{for} \PY{n}{node}\PY{p}{,}\PY{n}{degree} \PY{o+ow}{in} \PY{n}{Degree}\PY{p}{]}      \PY{c+c1}{\PYZsh{}me quedo con un vector donde cada elemento es el grado para el nodo indexado como 0,1,2.. }
-                                                          \PY{c+c1}{\PYZsh{} que se corresponde con el nombre de los delfines segun el orden que muestra matriz A }
-                                                          \PY{c+c1}{\PYZsh{} que seria el que da G.nodes()}
-         \PY{c+c1}{\PYZsh{}degree}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}97}]:} \PY{k}{def} \PY{n+nf}{delta}\PY{p}{(}\PY{n}{c\PYZus{}i}\PY{p}{,} \PY{n}{c\PYZus{}j}\PY{p}{)}\PY{p}{:}
-             \PY{k}{if}  \PY{n}{c\PYZus{}i} \PY{o}{==} \PY{n}{c\PYZus{}j}\PY{p}{:}
-                 \PY{k}{return} \PY{l+m+mi}{1} 
-             \PY{k}{else}\PY{p}{:}
-                 \PY{k}{return} \PY{l+m+mi}{0} 
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}102}]:} \PY{n}{delta}\PY{p}{(}\PY{n}{A}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{,} \PY{n}{A}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}102}]:} 1
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}123}]:} \PY{c+c1}{\PYZsh{}DEFINIMOSLA FUNCION MODULARIDAD a partir de un grafo G que ya tiene montado el campo escalar que le da una clase a cada nodo}
-          
-          \PY{k}{def} \PY{n+nf}{modularity}\PY{p}{(}\PY{n}{G}\PY{p}{,}\PY{n}{FieldString}\PY{p}{)}\PY{p}{:}
-              \PY{n}{modularity} \PY{o}{=} \PY{l+m+mi}{0}
-              \PY{n}{m} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{edges}\PY{p}{(}\PY{n}{G}\PY{p}{)}\PY{p}{)}
-              \PY{n}{A} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{to\PYZus{}numpy\PYZus{}matrix}\PY{p}{(}\PY{n}{G}\PY{p}{)}     
-              \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{n}{G}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{:}
-                  \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{n}{G}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{:}
-                      \PY{n}{A\PYZus{}ij} \PY{o}{=} \PY{n}{A}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]}
-                      \PY{n}{Degree} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{G}\PY{o}{.}\PY{n}{degree}\PY{p}{)}                           \PY{c+c1}{\PYZsh{}hago una lista a partir de lo que devuelve G.degree }
-                      \PY{n}{degree} \PY{o}{=} \PY{p}{[}\PY{n}{degree} \PY{k}{for} \PY{n}{node}\PY{p}{,}\PY{n}{degree} \PY{o+ow}{in} \PY{n}{Degree}\PY{p}{]} 
-                      \PY{n}{k\PYZus{}i} \PY{o}{=} \PY{n}{degree}\PY{p}{[}\PY{n}{i}\PY{p}{]}
-                      \PY{n}{k\PYZus{}j} \PY{o}{=} \PY{n}{degree}\PY{p}{[}\PY{n}{j}\PY{p}{]}
-                      \PY{n}{atrributes} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{get\PYZus{}node\PYZus{}attributes}\PY{p}{(}\PY{n}{G}\PY{p}{,}\PY{n}{FieldString}\PY{p}{)}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{)}
-                      \PY{n}{c\PYZus{}i} \PY{o}{=} \PY{n}{atrributes}\PY{p}{[}\PY{n}{i}\PY{p}{]}
-                      \PY{n}{c\PYZus{}j} \PY{o}{=} \PY{n}{atrributes}\PY{p}{[}\PY{n}{j}\PY{p}{]}
-                      \PY{n}{modularity} \PY{o}{=} \PY{p}{(}\PY{l+m+mi}{1}\PY{o}{/}\PY{p}{(}\PY{l+m+mi}{2} \PY{o}{*} \PY{n}{m}\PY{p}{)}\PY{p}{)} \PY{o}{*} \PY{n}{delta}\PY{p}{(}\PY{n}{c\PYZus{}i}\PY{p}{,} \PY{n}{c\PYZus{}j}\PY{p}{)} \PY{o}{*} \PY{p}{(}\PY{n}{A\PYZus{}ij} \PY{o}{+} \PY{p}{(}\PY{n}{k\PYZus{}i} \PY{o}{*} \PY{n}{k\PYZus{}j}\PY{p}{)}\PY{o}{/}\PY{n}{m}\PY{p}{)} \PY{o}{+} \PY{n}{modularity}
-              \PY{k}{return} \PY{n}{modularity}
-                      
-                      
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}127}]:} \PY{n}{modularity}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}            \PY{c+c1}{\PYZsh{}da un valor entre \PYZhy{}1 y 1 entonces..creo que esta mas o menos bien }
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}127}]:} 0.46883034690083286
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}128}]:} \PY{c+c1}{\PYZsh{}genders=Array(dict\PYZus{}gender.values())}
-          \PY{k}{def} \PY{n+nf}{BreakFieldAttribution}\PY{p}{(}\PY{n}{fieldAtributtion}\PY{p}{)}\PY{p}{:}
-              \PY{n}{names} \PY{o}{=} \PY{p}{[}\PY{n}{nodes} \PY{k}{for} \PY{n}{nodes}\PY{p}{,}\PY{n}{field} \PY{o+ow}{in} \PY{n}{fieldAtributtion}\PY{p}{]}
-              \PY{n}{field} \PY{o}{=} \PY{p}{[}\PY{n}{field} \PY{k}{for} \PY{n}{nodes}\PY{p}{,}\PY{n}{field} \PY{o+ow}{in} \PY{n}{fieldAtributtion}\PY{p}{]}
-              \PY{k}{return} \PY{n}{names}\PY{p}{,}\PY{n}{field}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}115}]:} \PY{n}{names} \PY{o}{=} \PY{n}{BreakFieldAttribution}\PY{p}{(}\PY{n}{dolphinsGender}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
-          \PY{n}{genders} \PY{o}{=} \PY{n}{BreakFieldAttribution}\PY{p}{(}\PY{n}{dolphinsGender}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
-          \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{shuffle}\PY{p}{(}\PY{n}{genders}\PY{p}{)} 
-          \PY{n}{dict\PYZus{}gender\PYZus{}together} \PY{o}{=} \PY{n+nb}{dict}\PY{p}{(}\PY{n+nb}{zip}\PY{p}{(}\PY{n}{names}\PY{p}{,}\PY{n}{genders}\PY{p}{)}\PY{p}{)}
-          \PY{n}{H} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{read\PYZus{}gml}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dolphins.gml}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}                  \PY{c+c1}{\PYZsh{}trabajamos sobre H (grafo nuevo)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}137}]:} \PY{n}{DistributionModularity} \PY{o}{=} \PY{p}{[}\PY{p}{]}                           \PY{c+c1}{\PYZsh{}vamos a ir appendando ahi en cada corrida }
-          
-          \PY{n}{names} \PY{o}{=} \PY{n}{BreakFieldAttribution}\PY{p}{(}\PY{n}{dolphinsGender}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
-          \PY{n}{genders} \PY{o}{=} \PY{n}{BreakFieldAttribution}\PY{p}{(}\PY{n}{dolphinsGender}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
-          \PY{n}{it} \PY{o}{=} \PY{l+m+mi}{1000}                                              \PY{c+c1}{\PYZsh{}numero de iteraciones }
-          
-          \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{it}\PY{p}{)}\PY{p}{:}
-              \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{shuffle}\PY{p}{(}\PY{n}{genders}\PY{p}{)}                       \PY{c+c1}{\PYZsh{}los mezcla randomly }
-              \PY{n}{dict\PYZus{}gender\PYZus{}together} \PY{o}{=} \PY{n+nb}{dict}\PY{p}{(}\PY{n+nb}{zip}\PY{p}{(}\PY{n}{names}\PY{p}{,}\PY{n}{genders}\PY{p}{)}\PY{p}{)}  \PY{c+c1}{\PYZsh{}los vuelvo a poner como un diccionario }
-              \PY{n}{H} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{read\PYZus{}gml}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dolphins.gml}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}                  \PY{c+c1}{\PYZsh{}trabajamos sobre H (grafo nuevo)}
-              \PY{n}{AssignGender}\PY{p}{(}\PY{n}{H}\PY{p}{,}\PY{n}{dict\PYZus{}gender\PYZus{}together}\PY{p}{)}              
-              \PY{c+c1}{\PYZsh{}modularity = modularity(H,\PYZsq{}gender\PYZsq{})}
-              \PY{n}{DistributionModularity}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{modularity}\PY{p}{(}\PY{n}{H}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
-          
-          \PY{c+c1}{\PYZsh{}ahora como output de este loop tenemos DistributionModularity que es la distribución de los valores de modularidad para la corrida }
-          \PY{c+c1}{\PYZsh{}tantas veces }
-          
-          \PY{c+c1}{\PYZsh{}entonces nos quedaría hacer un histograma de esto y calcular el p value. }
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}139}]:} \PY{n}{np}\PY{o}{.}\PY{n}{savetxt}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DistributionModularity.txt}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{DistributionModularity}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{,}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} 
-\end{Verbatim}
-
-
-    EL HISTOGRAMA DE DistributionModularity
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}145}]:} \PY{n}{font} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{family}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{normal}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
-                  \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{weight}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bold}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
-                  \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{size}\PY{l+s+s1}{\PYZsq{}}   \PY{p}{:} \PY{l+m+mi}{22}\PY{p}{\PYZcb{}}
-          
-          \PY{n}{plt}\PY{o}{.}\PY{n}{rc}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{font}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{font}\PY{p}{)}
-          
-          \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{)}
-          \PY{n}{plt}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{n}{DistributionModularity}\PY{p}{)}
-          \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Histograma de la distribución de modularidad para 1000 iteraciones de asignaciones aleatorias de sexo}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-          \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Modularidad}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-          \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Frecuencia}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}145}]:} Text(0,0.5,'Frecuencia')
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-C:\textbackslash{}Users\textbackslash{}Elizabeth\textbackslash{}Anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}matplotlib\textbackslash{}font\_manager.py:1328: UserWarning: findfont: Font family ['normal'] not found. Falling back to DejaVu Sans
+C:\textbackslash{}Users\textbackslash{}Elizabeth\textbackslash{}Anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}matplotlib\textbackslash{}font\_manager.py:1328: UserWarning: findfont: Font family ['Helvetica'] not found. Falling back to DejaVu Sans
   (prop.get\_family(), self.defaultFamily[fontext]))
 
     \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_33_2.png}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_10_2.png}
     \end{center}
     { \hspace*{\fill} \\}
     
-    \section{PUNTO B-II}\label{punto-b-ii}
+    Dentro de los graficos hechos para el bineado lineal, en el que ambas
+escalas son logaritmicas se puede ver notoriamente que existe un rango
+de k tal que la distribucion es lineal decreciente. Sin embargo, existe
+un problema. A medida que va creciendo k se ve que existen varios k para
+el mismo valor de \(P_k\) (apilamiento) produciendo que los puntos se
+organicen como lineas horizontales.
+
+    \section{a. BINEADO LOGARITMICO EN BASE
+2}\label{a.-bineado-logaritmico-en-base-2}
+
+\(P_{k_i} = \frac{N_i}{\Delta b_i} = \frac{N_i}{2^i}\)
+
+\(b = [0, 2^0, 2^1, 2^2, ... ,2^{i_{max}}], b_i = 2^i\)
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}149}]:} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{DistributionModularity}\PY{p}{)}\PY{p}{,} \PY{n}{modularity}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{DistributionModularity}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}149}]:} (0.4524053538230273, 0.46883034690083286, 0.027015608737991276)
-\end{Verbatim}
-            
-    Entonces, el valor que sale aleatorio es: \(0.452 \pm 0.027\) en
-unidades arbitrarias Y el valor real es 0.469 que se encuentra dentro
-del intervalo del valor medio de la distribucion aleatoria
-
-    \section{PUNTO B-III: CALCULO DEL P
-VALUE}\label{punto-b-iii-calculo-del-p-value}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}178}]:} \PY{c+c1}{\PYZsh{}CALCULO LAS APARICIONES DE VALORES POR ENCIMA DEL QUE PRESENTA NUESTRO GRAFO CON LA ATRIBUCION DE GENERO }
-          
-          \PY{n}{frecuencia} \PY{o}{=} \PY{l+m+mi}{0}
-          \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{n}{DistributionModularity}\PY{p}{)}\PY{p}{)}\PY{p}{:}
-              \PY{k}{if} \PY{n}{DistributionModularity}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{\PYZgt{}}\PY{o}{=}  \PY{l+m+mf}{0.469}\PY{p}{:}                  \PY{c+c1}{\PYZsh{}como nuestro valor real se encuentra a derecha buscamos los eventos mas extremos a derecha}
-                  \PY{n}{frecuencia} \PY{o}{=} \PY{n}{frecuencia} \PY{o}{+} \PY{l+m+mi}{1} 
-          \PY{n}{frecuencia}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}178}]:} 271
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}187}]:} \PY{n}{pvalue} \PY{o}{=} \PY{p}{(}\PY{n+nb}{max}\PY{p}{(}\PY{n}{DistributionModularity}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{l+m+mf}{0.469}\PY{p}{)} \PY{o}{*} \PY{p}{(}\PY{n}{frecuencia}\PY{o}{/}\PY{n}{it}\PY{p}{)}                \PY{c+c1}{\PYZsh{}es el area a derecha del valor real en el histograma}
-          \PY{k}{if} \PY{n}{pvalue} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{p}{(}\PY{l+m+mi}{1}\PY{o}{/}\PY{l+m+mi}{1000}\PY{p}{)}\PY{p}{:}                                                          \PY{c+c1}{\PYZsh{}en general se toma ese valor }
-              \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{fuera de la hipotesis nula}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-          \PY{k}{else}\PY{p}{:}
-              \PY{n+nb}{print} \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{en la hipotesis nula}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}11}]:} \PY{c+c1}{\PYZsh{}buscamos el i\PYZus{}max que tiene nuestra distribucion para hacer la serie }
+         \PY{n}{imax} \PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{n}{math}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{ls\PYZus{}set\PYZus{}degree}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}\PY{o}{+}\PY{l+m+mi}{1}
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{imax}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{l+m+mi}{2}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{9}\PY{p}{)}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-en la hipotesis nula
+9
+512
 
     \end{Verbatim}
 
-    como tenemos un pvalue grande que el tipico treashold entonces decimos
-que nuestro resultado se condice con lo de la hipotesis nula entonces
-que no hay homofilia fuera de la homofilia que se genera de forma
-aleatoria.
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}12}]:} \PY{c+c1}{\PYZsh{}armamos la serie b }
+         \PY{n}{serie} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+         \PY{n}{serie}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{)}
+         
+         \PY{k}{for} \PY{n}{k} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{imax}\PY{p}{)}\PY{p}{:}
+             \PY{n}{serie}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{serie}\PY{p}{[}\PY{n}{k}\PY{p}{]}\PY{o}{+}\PY{l+m+mi}{2}\PY{o}{*}\PY{o}{*}\PY{n}{k}\PY{p}{)}
+             
+         \PY{n}{serie}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}12}]:} [0, 1, 3, 7, 15, 31, 63, 127, 255, 511]
+\end{Verbatim}
+            
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}13}]:} \PY{c+c1}{\PYZsh{}Iteramos sobre cada elemento de la serie y para plog iteramos sobre la lista de los grados y vamos armando un vector donde }
+         \PY{c+c1}{\PYZsh{}cada elemento es el grado. Va a haber un vector para cada elemento de la serie donde sus elementos van a ser el grado para }
+         \PY{c+c1}{\PYZsh{}cada uno de los nodos que cumpla que el grado este contenido entre dos elementos sucesivos de la serie. }
+         \PY{c+c1}{\PYZsh{}Entonces, Plog va guardando el tamano de cada uno de esos vectores (cantidad de nodos con grado comprendido en ese bin) normalizado}
+         \PY{c+c1}{\PYZsh{}por la cantidad total de nodos. }
+         
+         \PY{n}{Plog} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+         
+         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{serie}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+             \PY{n}{plog} \PY{o}{=} \PY{p}{[}\PY{n}{d} \PY{k}{for} \PY{n}{d} \PY{o+ow}{in} \PY{n}{degree} \PY{k}{if} \PY{n}{serie}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{\PYZlt{}} \PY{n}{d} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{serie}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{+} \PY{l+m+mi}{2}\PY{o}{*}\PY{o}{*}\PY{n}{i}\PY{p}{]} 
+             \PY{n}{Plog}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{plog}\PY{p}{)}\PY{o}{/}\PY{n}{N}\PY{p}{)} 
+             
+         \PY{n}{Plog}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}13}]:} [0.34141880416321907,
+          0.5190523886251797,
+          0.08134825588990985,
+          0.03165962635544136,
+          0.014458041196707747,
+          0.006314505944345251,
+          0.003048382180028742,
+          0.0012193528720114968,
+          0.0008274180202935157,
+          0.0003919348517179811]
+\end{Verbatim}
+            
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}14}]:} \PY{c+c1}{\PYZsh{}queremos ver que esta normalizada la distribucion.}
+         \PY{n+nb}{sum}\PY{p}{(}\PY{n}{Plog}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}14}]:} 0.9997387100988548
+\end{Verbatim}
+            
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}15}]:} \PY{n}{font} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{family}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Helvetica}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                 \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{weight}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bold}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                 \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{size}\PY{l+s+s1}{\PYZsq{}}   \PY{p}{:} \PY{l+m+mi}{20}\PY{p}{\PYZcb{}}
+         
+         \PY{n}{plt}\PY{o}{.}\PY{n}{rc}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{font}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{font}\PY{p}{)}
+         
+         \PY{n}{f} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize} \PY{o}{=} \PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{12}\PY{p}{)}\PY{p}{)}
+         \PY{n}{f}\PY{o}{.}\PY{n}{subplots\PYZus{}adjust}\PY{p}{(}\PY{n}{hspace}\PY{o}{=}\PY{l+m+mf}{0.4}\PY{p}{,} \PY{n}{wspace}\PY{o}{=}\PY{l+m+mf}{0.4}\PY{p}{)}
+         \PY{n}{f}\PY{o}{.}\PY{n}{suptitle}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bineados logaritmicos base 2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{fontweight} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bold}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{size} \PY{o}{=} \PY{l+m+mi}{30}\PY{p}{)} 
+         \PY{n}{sub1} \PY{o}{=} \PY{n}{f}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{221}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{serie}\PY{p}{,}\PY{n}{Plog}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{sub2} \PY{o}{=} \PY{n}{f}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{222}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{loglog}\PY{p}{(}\PY{n}{serie}\PY{p}{,}\PY{n}{Plog}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{sub3} \PY{o}{=} \PY{n}{f}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{223}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{semilogy}\PY{p}{(}\PY{n}{serie}\PY{p}{,}\PY{n}{Plog}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{sub4} \PY{o}{=} \PY{n}{f}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{224}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{semilogx}\PY{p}{(}\PY{n}{serie}\PY{p}{,}\PY{n}{Plog}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
+         \PY{n}{sub1}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Ambas escalas lineales}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{size} \PY{o}{=} \PY{l+m+mi}{20}\PY{p}{)}
+         \PY{n}{sub2}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Ambas escalas log}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{size} \PY{o}{=} \PY{l+m+mi}{20}\PY{p}{)}
+         \PY{n}{sub3}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Escala lineal en x y log en y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{size} \PY{o}{=} \PY{l+m+mi}{20}\PY{p}{)}
+         \PY{n}{sub4}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Escala log en x y lineal en y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{size} \PY{o}{=} \PY{l+m+mi}{20}\PY{p}{)}
+         \PY{n}{sub1}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub1}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}P\PYZus{}k\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub2}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub2}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}P\PYZus{}k\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub3}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub3}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}P\PYZus{}k\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub4}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub4}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}P\PYZus{}k\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}15}]:} Text(0,0.5,'\$P\_k\$')
+\end{Verbatim}
+            
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}Elizabeth\textbackslash{}Anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}matplotlib\textbackslash{}font\_manager.py:1328: UserWarning: findfont: Font family ['Helvetica'] not found. Falling back to DejaVu Sans
+  (prop.get\_family(), self.defaultFamily[fontext]))
+
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_17_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Dentro de los graficos hechos para el bineado logaritmico de base 2, en
+el que ambas escalas son logaritmicas se puede ver notoriamente que
+existe un rango de k tal que la distribucion es lineal.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}16}]:} \PY{n}{font} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{family}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Helvetica}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                 \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{weight}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bold}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                 \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{size}\PY{l+s+s1}{\PYZsq{}}   \PY{p}{:} \PY{l+m+mi}{20}\PY{p}{\PYZcb{}}
+         
+         \PY{n}{plt}\PY{o}{.}\PY{n}{rc}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{font}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{font}\PY{p}{)}
+         
+         \PY{n}{f} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize} \PY{o}{=} \PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{12}\PY{p}{)}\PY{p}{)}
+         \PY{n}{f}\PY{o}{.}\PY{n}{subplots\PYZus{}adjust}\PY{p}{(}\PY{n}{hspace}\PY{o}{=}\PY{l+m+mf}{0.4}\PY{p}{,} \PY{n}{wspace}\PY{o}{=}\PY{l+m+mf}{0.4}\PY{p}{)}
+         \PY{n}{f}\PY{o}{.}\PY{n}{suptitle}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Comparación de bineados en ambas escalas log}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{fontweight} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bold}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{size} \PY{o}{=} \PY{l+m+mi}{30}\PY{p}{)} 
+         \PY{n}{sub1} \PY{o}{=} \PY{n}{f}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{221}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{loglog}\PY{p}{(}\PY{n}{serie}\PY{p}{,}\PY{n}{Plog}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{sub2} \PY{o}{=} \PY{n}{f}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{222}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{loglog}\PY{p}{(}\PY{n}{ls\PYZus{}set\PYZus{}degree}\PY{p}{,}\PY{n}{P}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{sub1}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bineado logarítmico base 2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{size} \PY{o}{=} \PY{l+m+mi}{20}\PY{p}{)}
+         \PY{n}{sub2}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bineado lineal}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{size} \PY{o}{=} \PY{l+m+mi}{20}\PY{p}{)}
+         \PY{n}{sub1}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub1}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}P\PYZus{}k\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub2}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{sub2}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}P\PYZus{}k\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}16}]:} Text(0,0.5,'\$P\_k\$')
+\end{Verbatim}
+            
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}Elizabeth\textbackslash{}Anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}matplotlib\textbackslash{}font\_manager.py:1328: UserWarning: findfont: Font family ['Helvetica'] not found. Falling back to DejaVu Sans
+  (prop.get\_family(), self.defaultFamily[fontext]))
+
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_19_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Poniendo ambas escalas log, es claro que en un ploteo de bineado
+logaritmico en base 2 se aprecia de forma mas clara el comportamiento de
+la red libre escala porque en el caso lineal se ve que para un mismo
+valor de \(P_k\) le corresponden distintos valores k lo cual no permite
+visualizar correctamente el comportamiento lineal. Al tomar un bineado
+logarítimico se agrupan los k en la serie
+\(b = [0, 2^0, 2^1, 2^2, ... ,2^{i_{max}}], b_i = 2^i\) y se tiene un
+único valor del \(P_i\) que corresponde con ese elemento de la serie
+\(b_i\) tal que hace un promedio entonces es claro visualizar la
+relación lineal y hacer un ajuste sobre ese grafico en vez de en el
+bineado lineal.
+
+    \section{b. EL AJUSTE PARA ENCONTRAR EL PARAMETRO DE
+ESCALA}\label{b.-el-ajuste-para-encontrar-el-parametro-de-escala}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}17}]:} \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
+         \PY{c+c1}{\PYZsh{} Fitting the data \PYZhy{}\PYZhy{} Least Squares Method}
+         \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
+         
+         \PY{c+c1}{\PYZsh{} Power\PYZhy{}law fitting is best done by first converting}
+         \PY{c+c1}{\PYZsh{} to a linear equation and then fitting to a straight line.}
+         \PY{c+c1}{\PYZsh{} Note that the `logyerr` term here is ignoring a constant prefactor.}
+         \PY{c+c1}{\PYZsh{}}
+         \PY{c+c1}{\PYZsh{}  y = a * x\PYZca{}b}
+         \PY{c+c1}{\PYZsh{}  log(y) = log(a) + b*log(x)}
+         \PY{c+c1}{\PYZsh{}}
+         
+         \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
+         \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}serie tiene su primer elemento que es cero.. entonces se lo sacamos porque no podemos hacer el log sino. }
+         \PY{k}{def} \PY{n+nf}{recortar}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{:}
+             \PY{n}{xf} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+             \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{xf}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{x}\PY{p}{[}\PY{n}{i}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+             \PY{k}{return} \PY{n}{xf}
+          
+         \PY{n}{xdata} \PY{o}{=} \PY{n}{recortar}\PY{p}{(}\PY{n}{serie}\PY{p}{)}
+         \PY{n}{ydata} \PY{o}{=} \PY{n}{recortar}\PY{p}{(}\PY{n}{Plog}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
+         \PY{c+c1}{\PYZsh{}esta es la funcion que queremos fitear }
+         \PY{n}{powerlaw} \PY{o}{=} \PY{k}{lambda} \PY{n}{x}\PY{p}{,} \PY{n}{amp}\PY{p}{,} \PY{n}{index}\PY{p}{:} \PY{n}{amp} \PY{o}{*} \PY{p}{(}\PY{n}{x}\PY{o}{*}\PY{o}{*}\PY{n}{index}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
+         \PY{c+c1}{\PYZsh{}es mejor fitear una lineal y despues volver a la powerlaw con los parametros que obtenemos}
+         \PY{k+kn}{from} \PY{n+nn}{scipy} \PY{k}{import} \PY{n}{optimize}
+         
+         \PY{n}{logx} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log10}\PY{p}{(}\PY{n}{xdata}\PY{p}{)}
+         \PY{n}{logy} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log10}\PY{p}{(}\PY{n}{ydata}\PY{p}{)}
+         
+         
+         \PY{n}{fitfunc} \PY{o}{=} \PY{k}{lambda} \PY{n}{p}\PY{p}{,} \PY{n}{x}\PY{p}{:} \PY{n}{p}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{+} \PY{n}{p}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{*} \PY{n}{x}
+         \PY{n}{errfunc} \PY{o}{=} \PY{k}{lambda} \PY{n}{p}\PY{p}{,} \PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{:} \PY{p}{(}\PY{n}{y} \PY{o}{\PYZhy{}} \PY{n}{fitfunc}\PY{p}{(}\PY{n}{p}\PY{p}{,} \PY{n}{x}\PY{p}{)}\PY{p}{)}                                                \PY{c+c1}{\PYZsh{}me lo que vamos a minimizar}
+         
+         
+         \PY{n}{pinit} \PY{o}{=} \PY{p}{[}\PY{l+m+mf}{1.0}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mf}{1.0}\PY{p}{]}                                                                
+         \PY{c+c1}{\PYZsh{}elegimos unos valores ad hoc y vemos que funcionaron sino probariamos distintos                                             }
+         
+         \PY{n}{out} \PY{o}{=} \PY{n}{optimize}\PY{o}{.}\PY{n}{leastsq}\PY{p}{(}\PY{n}{errfunc}\PY{p}{,} \PY{n}{pinit}\PY{p}{,}\PY{n}{args}\PY{o}{=}\PY{p}{(}\PY{n}{logx}\PY{p}{,} \PY{n}{logy}\PY{p}{)}\PY{p}{,} \PY{n}{full\PYZus{}output}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}                     
+         
+         
+         \PY{n}{pfinal} \PY{o}{=} \PY{n}{out}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+         \PY{n}{covar} \PY{o}{=} \PY{n}{out}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{pfinal}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{covar}\PY{p}{)}
+         
+         \PY{n}{index} \PY{o}{=} \PY{n}{pfinal}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+         \PY{n}{amp} \PY{o}{=} \PY{l+m+mf}{10.0}\PY{o}{*}\PY{o}{*}\PY{n}{pfinal}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}                                                                  
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[-0.47583394 -1.11854948]
+[[ 0.43054041 -0.22101113]
+ [-0.22101113  0.15291621]]
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}18}]:} \PY{n}{font} \PY{o}{=} \PY{p}{\PYZob{}} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{family}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                 \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{weight}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bold}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                 \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{size}\PY{l+s+s1}{\PYZsq{}}   \PY{p}{:} \PY{l+m+mi}{20}\PY{p}{\PYZcb{}}
+         
+         \PY{n}{plt}\PY{o}{.}\PY{n}{rc}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{font}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{font}\PY{p}{)}
+         
+         \PY{n}{f} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize} \PY{o}{=} \PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,}\PY{l+m+mi}{14}\PY{p}{)}\PY{p}{)}
+         \PY{n}{f}\PY{o}{.}\PY{n}{subplots\PYZus{}adjust}\PY{p}{(}\PY{n}{hspace}\PY{o}{=}\PY{l+m+mf}{0.6}\PY{p}{,} \PY{n}{wspace}\PY{o}{=}\PY{l+m+mf}{0.6}\PY{p}{)}
+         \PY{n}{sub1} \PY{o}{=} \PY{n}{f}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{221}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{xdata}\PY{p}{,} \PY{n}{powerlaw}\PY{p}{(}\PY{n}{xdata}\PY{p}{,} \PY{n}{amp}\PY{p}{,} \PY{n}{index}\PY{p}{)}\PY{p}{)}                               \PY{c+c1}{\PYZsh{} Fit}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{xdata}\PY{p}{,} \PY{n}{ydata}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{k.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}                                               \PY{c+c1}{\PYZsh{} Data}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mejor fiteo Power Law}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{k}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}P\PYZus{}k\PYZdl{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{sub2} \PY{o}{=} \PY{n}{f}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{222}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{loglog}\PY{p}{(}\PY{n}{xdata}\PY{p}{,} \PY{n}{powerlaw}\PY{p}{(}\PY{n}{xdata}\PY{p}{,} \PY{n}{amp}\PY{p}{,} \PY{n}{index}\PY{p}{)}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{loglog}\PY{p}{(}\PY{n}{xdata}\PY{p}{,} \PY{n}{ydata}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{k.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Data}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mejor fiteo lineal}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{k (log scale)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}P\PYZus{}k\PYZdl{} (log scale)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         
+         
+         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{parametro de orden de Power Law =}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{n}{index}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+parametro de orden de Power Law = 1.1185494761412604
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}Elizabeth\textbackslash{}Anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}matplotlib\textbackslash{}font\_manager.py:1328: UserWarning: findfont: Font family [] not found. Falling back to DejaVu Sans
+  (prop.get\_family(), self.defaultFamily[fontext]))
+
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_23_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Para corroborar el valor del parametro de orden hacemos un fiteo lineal
+de matplotlib a los datos linealizados (haciendoles log10) pues vimos
+que en esa escala el comportamiento es lineal. Notese que no fue
+necesario hacer un cutoff a partir de un k o hasta un determinado k para
+considerar un comportamiento lineal.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}19}]:} \PY{k+kn}{from} \PY{n+nn}{scipy} \PY{k}{import} \PY{n}{stats}
+         
+         \PY{c+c1}{\PYZsh{} Generated linear fit}
+         \PY{n}{slope}\PY{p}{,} \PY{n}{intercept}\PY{p}{,} \PY{n}{r\PYZus{}value}\PY{p}{,} \PY{n}{p\PYZus{}value}\PY{p}{,} \PY{n}{std\PYZus{}err} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{linregress}\PY{p}{(}\PY{n}{logx}\PY{p}{,}\PY{n}{logy}\PY{p}{)}
+         \PY{n}{line} \PY{o}{=} \PY{p}{[}\PY{p}{(}\PY{n}{slope} \PY{o}{*} \PY{n}{i} \PY{o}{+} \PY{n}{intercept}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{logx}\PY{p}{]}
+         
+         \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{logx}\PY{p}{,}\PY{n}{logy}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{logx}\PY{p}{,} \PY{n}{line}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Fiteo lineal con Matplotlib}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}log\PYZus{}}\PY{l+s+si}{\PYZob{}10\PYZcb{}}\PY{l+s+s1}{(k)\PYZdl{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}log\PYZus{}}\PY{l+s+si}{\PYZob{}10\PYZcb{}}\PY{l+s+s1}{(P\PYZus{}k)\PYZdl{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{parametro de orden de ajuste lineal}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{n}{slope}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+parametro de orden de ajuste lineal 1.1185494765731623
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}Elizabeth\textbackslash{}Anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}matplotlib\textbackslash{}font\_manager.py:1328: UserWarning: findfont: Font family [] not found. Falling back to DejaVu Sans
+  (prop.get\_family(), self.defaultFamily[fontext]))
+
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_25_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Entonces, vemos que por ambos ajustes hallamos el mismo valor del
+parametro de orden \(\gamma = 1.1\). El hecho de poder hallar dicho
+parametro nos esta diciendo que en efecto es una power law el
+comportamiento. Y que la mejor forma de apreciarlo es con el bindeado
+logaritico en base 2 en ambas escalas logaritmicas.
 
 
     % Add a bibliography block to the postdoc
