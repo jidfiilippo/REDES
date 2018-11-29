@@ -1,0 +1,6 @@
+1er grado: 20 fuman de 134 total de nodos 
+
+
+------------ 
+*me queda cuantificar en una tablita numeritos 
+*ver cuando me paro en nodos que fuman como cambia el mutual entre fumadores y no fumadores 
